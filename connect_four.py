@@ -1,15 +1,16 @@
+#code  from July 10, 2022 https://www.youtube.com/watch?v=UYgyRArKDEs, July 13, 2022 https://www.youtube.com/watch?v=zD-Xuu_Jpe4
 #helps create matrixes
 import numpy as np
 
-#number of rows in board/ permanent so all caps variable
+#number of rows in board/ permanent so all caps variable(code etiqeutte)
 ROW_COUNT = 6
 
-#number of columns in board/ permanent so all caps variable
+#number of columns in board/ permanent so all caps variable(code etiqeutte)
 COLUMN_COUNT = 7
 
 #create matrix of zeros by (row,clumn)
 def create_board():
-    board=np.zeros((6,7))
+    board=np.zeros((ROW_COUNT,COLUMN_COUNT))
     return board
 
 #defines a variable that will place a piece in the matrix
@@ -18,7 +19,7 @@ def drop_piece(board, row, col, piece):
 
 #defines a variable that will see if top row has been filled
 def is_valid_location(board, col):
-    return board[5][col]==0
+    return board[ROW_COUNT-1][col]==0
 
 #checks to see which row in matrix is the next open row
 def get_next_open_row(board,col):
@@ -31,7 +32,29 @@ def get_next_open_row(board,col):
 #need to flip board so our(0,0) in the matrix starts at bottom right as opposed to top right
 def print_board(board):
     print(np.flip(board,0))
-
+#define winng move, function to determine if someone has won
+def winning_move(board,piece):
+    #Check horizontal locations for a win
+    for c in range(COLUMN_COUNT-3):
+        for r in range(ROW_COUNT):
+            if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece and board[r][c]:
+                    return True
+    #Check for vertical win
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT-3):
+            if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece and board[r][c]:
+                    return True
+    #Check for postively sloped diagonals
+    for c in range(COLUMN_COUNT-3):
+        for r in range(ROW_COUNT-3):
+            if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece and board[r][c]:
+                    return True
+    #Check for negatively sloped diagonals
+    for c in range(COLUMN_COUNT-3):
+        for r in range(3,ROW_COUNT):1
+    
+        if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece and board[r][c]:
+                    return True
 #assign the all of create_board to variable board
 board = create_board()
 #prints board in the defined correct orientation
@@ -54,6 +77,11 @@ while not game_over:
             #in the row and column we will drop player 1 piece which is a 1
             drop_piece(board, row, col, 1)
 
+                #defines if player win1 and stopes game
+            if winning_move(board, 1):
+                print("PLAYER 1 Wins! Congrats!")
+                game_over = True
+
     #Ask for Player 2 input
     else:
         col = int(input("Player 2 Make your selection (0-6)"))
@@ -63,6 +91,10 @@ while not game_over:
             row = get_next_open_row(board,col)
             #in the row and column we will drop player 2 piece which is a 2
             drop_piece(board, row, col, 2)
+                #defines if player 2 win and stops game
+            if winning_move(board, 2):
+                print("PLAYER 2 Wins! Congrats!")
+                game_over = True
 
     #prints board in the defined correct orientation
     print_board(board)        
