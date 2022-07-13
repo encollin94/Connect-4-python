@@ -1,6 +1,11 @@
-#code  from July 10, 2022 https://www.youtube.com/watch?v=UYgyRArKDEs, July 13, 2022 https://www.youtube.com/watch?v=zD-Xuu_Jpe4
+#code  from July 10, 2022 https://www.youtube.com/watch?v=UYgyRArKDEs, July 13, 2022 https://www.youtube.com/watch?v=zD-Xuu_Jpe4, July 13, 2022 https://www.youtube.com/watch?v=SDz3P_Ctm7U
 #helps create matrixes
 import numpy as np
+import pygame
+import sys
+
+BLUE=(5,5,110)
+CIRCLE=(0,0,20)
 
 #number of rows in board/ permanent so all caps variable(code etiqeutte)
 ROW_COUNT = 6
@@ -55,6 +60,14 @@ def winning_move(board,piece):
     
         if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece and board[r][c]:
                     return True
+
+#defina  functions that will make the board game graphics
+def draw_board(board):
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT):
+            pygame.draw.rect(screen,BLUE,(c*SQUARESIZE, r*SQUARESIZE+SQUARESIZE,SQUARESIZE, SQUARESIZE))
+            pygame.draw.circle(screen,CIRCLE,(int(c*SQUARESIZE+SQUARESIZE/2), int(r*SQUARESIZE+SQUARESIZE+SQUARESIZE/2)), RADIUS)
+
 #assign the all of create_board to variable board
 board = create_board()
 #prints board in the defined correct orientation
@@ -65,41 +78,66 @@ game_over= False
 #create a variable that will decide what players turn it is
 turn = 0
 
+#initiate pygame, event based game library, reads how you move mouse and key strokes as individual events
+pygame.init()
+#create how big you want board, measurement all in pixels
+SQUARESIZE = 100
+width = COLUMN_COUNT*SQUARESIZE
+height= (ROW_COUNT+1)*SQUARESIZE
+
+size =(width,height)
+
+RADIUS= int(SQUARESIZE/2-5)
+
+screen = pygame.display.set_mode(size)
+draw_board(board)
+pygame.display.update()
+
 #start game  and loop through until game_over is True
 while not game_over:
-    #Ask for Player 1 Input
-    if turn == 0:
-        col = int(input("Player 1 Make your Selection (0-6)"))
-        #uses player in put to see if the input is valid
-        if is_valid_location(board,col):
-            #if valid then we will retrieve the next available row that is still a 0
-            row = get_next_open_row(board,col)
-            #in the row and column we will drop player 1 piece which is a 1
-            drop_piece(board, row, col, 1)
+    #establish the events that pygame will read in the game
+    for event in pygame.event.get():
+        #allows player to exit out of game by clicking the close button in top right corner/should establish a quit in all games
+        if event.type == pygame.QUIT:
+            sys.exit()
+        #creates an event type for when you click mouse, all of game is using this funtion so put all of game functionality under mouse button down 
+        if event.type == pygame.MOUSEBUTTONDOWN: 
+            continue
+        
 
-                #defines if player win1 and stopes game
-            if winning_move(board, 1):
-                print("PLAYER 1 Wins! Congrats!")
-                game_over = True
+            #Ask for Player 1 Input
+            if turn == 0:
+                col = int(input("Player 1 Make your Selection (0-6)"))
+                #uses player in put to see if the input is valid
+                if is_valid_location(board,col):
+                    #if valid then we will retrieve the next available row that is still a 0
+                    row = get_next_open_row(board,col)
+                    #in the row and column we will drop player 1 piece which is a 1
+                    drop_piece(board, row, col, 1)
 
-    #Ask for Player 2 input
-    else:
-        col = int(input("Player 2 Make your selection (0-6)"))
-        #uses player in put to see if the input is valid
-        if is_valid_location(board,col):
-            #if valid then we will retrieve the next available row that is still a 0
-            row = get_next_open_row(board,col)
-            #in the row and column we will drop player 2 piece which is a 2
-            drop_piece(board, row, col, 2)
-                #defines if player 2 win and stops game
-            if winning_move(board, 2):
-                print("PLAYER 2 Wins! Congrats!")
-                game_over = True
+                    #defines if player win1 and stopes game
+                    if winning_move(board, 1):
+                        print("PLAYER 1 Wins! Congrats!")
+                        game_over = True
 
-    #prints board in the defined correct orientation
-    print_board(board)        
-    #increase turn by 1
-    turn += 1
-    #makes turn either 0 or 1 so that it will easily flip between Player 1 and Player 2
-    turn = turn%2
+             #Ask for Player 2 input
+            else:
+                col = int(input("Player 2 Make your selection (0-6)"))
+                #uses player in put to see if the input is valid
+                if is_valid_location(board,col):
+                    #if valid then we will retrieve the next available row that is still a 0
+                    row = get_next_open_row(board,col)
+                    #in the row and column we will drop player 2 piece which is a 2
+                    drop_piece(board, row, col, 2)
+                     #defines if player 2 win and stops game
+                    if winning_move(board, 2):
+                        print("PLAYER 2 Wins! Congrats!")
+                        game_over = True
+
+            #prints board in the defined correct orientation
+            print_board(board)        
+            #increase turn by 1
+            turn += 1
+            #makes turn either 0 or 1 so that it will easily flip between Player 1 and Player 2
+            turn = turn%2
 
